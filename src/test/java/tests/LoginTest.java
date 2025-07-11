@@ -4,6 +4,10 @@ import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Story;
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import pages.ForgotPasswordPage;
@@ -16,8 +20,30 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Epic("Stellar Burgers")
 @Feature("Вход в систему")
 public class LoginTest extends BaseTest {
-    private final String EMAIL = "boro43604360@mail.ru";
+    private String testEmail;
     private final String PASSWORD = "43604360";
+    private String accessToken;
+
+    @BeforeEach
+    public void setUp() {
+        // Создание тестового пользователя через API
+        testEmail = "testuser" + System.currentTimeMillis() + "@mail.ru";
+        RestAssured.baseURI = "https://stellarburgers.nomoreparties.site";
+        RestAssured.given()
+                .contentType("application/json")
+                .body("{\"email\":\"" + testEmail + "\",\"password\":\"" + PASSWORD + "\",\"name\":\"TestUser\"}")
+                .post("/api/auth/register");
+    }
+
+    @AfterEach
+    public void tearDown() {
+        // Удаление тестового пользователя через API
+        if (accessToken != null) {
+            RestAssured.given()
+                    .header("Authorization", accessToken)
+                    .delete("/api/auth/user");
+        }
+    }
 
     @Test
     @DisplayName("Вход через кнопку 'Войти в аккаунт' на главной")
@@ -30,7 +56,14 @@ public class LoginTest extends BaseTest {
         mainPage.clickLoginButton();
 
         LoginPage loginPage = new LoginPage(driver);
-        loginPage.login(EMAIL, PASSWORD);
+        loginPage.login(testEmail, PASSWORD);
+
+        // Получаем токен для последующего удаления пользователя
+        Response response = RestAssured.given()
+                .contentType("application/json")
+                .body("{\"email\":\"" + testEmail + "\",\"password\":\"" + PASSWORD + "\"}")
+                .post("/api/auth/login");
+        accessToken = response.path("accessToken");
 
         assertTrue(mainPage.isOrderButtonDisplayed(), "После успешного входа должна отображаться кнопка оформления заказа");
     }
@@ -46,7 +79,7 @@ public class LoginTest extends BaseTest {
         mainPage.header.clickPersonalAccountButton();
 
         LoginPage loginPage = new LoginPage(driver);
-        loginPage.login(EMAIL, PASSWORD);
+        loginPage.login(testEmail, PASSWORD);
 
         assertTrue(mainPage.isOrderButtonDisplayed(), "После успешного входа должна отображаться кнопка оформления заказа");
     }
@@ -67,7 +100,7 @@ public class LoginTest extends BaseTest {
         RegisterPage registerPage = new RegisterPage(driver);
         registerPage.clickLoginLink();
 
-        loginPage.login(EMAIL, PASSWORD);
+        loginPage.login(testEmail, PASSWORD);
 
         assertTrue(mainPage.isOrderButtonDisplayed(), "После успешного входа должна отображаться кнопка оформления заказа");
     }
@@ -88,7 +121,7 @@ public class LoginTest extends BaseTest {
         ForgotPasswordPage forgotPasswordPage = new ForgotPasswordPage(driver);
         forgotPasswordPage.clickLoginLink();
 
-        loginPage.login(EMAIL, PASSWORD);
+        loginPage.login(testEmail, PASSWORD);
 
         assertTrue(mainPage.isOrderButtonDisplayed(), "После успешного входа должна отображаться кнопка оформления заказа");
     }

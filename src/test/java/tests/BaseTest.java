@@ -11,7 +11,7 @@ import org.openqa.selenium.WebDriver;
 @ExtendWith(AllureJunit5.class)
 public class BaseTest {
     protected WebDriver driver;
-    protected boolean useYandexBrowser = false;
+    protected boolean useYandexBrowser = Boolean.parseBoolean(System.getProperty("yandexBrowser", "false"));
 
     @BeforeEach
     public void setUp() {

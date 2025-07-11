@@ -1,5 +1,6 @@
 package pages;
 
+import io.qameta.allure.Step;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -22,14 +23,17 @@ public class ForgotPasswordPage {
         PageFactory.initElements(driver, this);
     }
 
+    @Step("Ввод email")
     public void setEmail(String email) {
         emailInput.sendKeys(email);
     }
 
+    @Step("Клик по кнопке 'Восстановить'")
     public void clickRestoreButton() {
         restoreButton.click();
     }
 
+    @Step("Клик по ссылке 'Войти'")
     public void clickLoginLink() {
         loginLink.click();
     }

@@ -22,8 +22,9 @@ public class ConstructorTest extends BaseTest {
         mainPage.open();
 
         mainPage.constructor.clickSaucesTab();
-        mainPage.constructor.clickBunsTab();
+        assertTrue(mainPage.constructor.isSaucesSectionDisplayed(), "Должен отображаться раздел с соусами");
 
+        mainPage.constructor.clickBunsTab();
         assertTrue(mainPage.constructor.isBunsSectionDisplayed(), "Должен отображаться раздел с булками");
     }
 
@@ -36,7 +37,6 @@ public class ConstructorTest extends BaseTest {
         mainPage.open();
 
         mainPage.constructor.clickSaucesTab();
-
         assertTrue(mainPage.constructor.isSaucesSectionDisplayed(), "Должен отображаться раздел с соусами");
     }
 
@@ -49,7 +49,6 @@ public class ConstructorTest extends BaseTest {
         mainPage.open();
 
         mainPage.constructor.clickFillingsTab();
-
         assertTrue(mainPage.constructor.isFillingsSectionDisplayed(), "Должен отображаться раздел с начинками");
     }
 }
