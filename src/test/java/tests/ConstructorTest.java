@@ -22,10 +22,10 @@ public class ConstructorTest extends BaseTest {
         mainPage.open();
 
         mainPage.constructor.clickSaucesTab();
-        assertTrue(mainPage.constructor.isSaucesSectionDisplayed(), "Должен отображаться раздел с соусами");
+        assertTrue(mainPage.constructor.isSaucesSectionActive(), "Должен быть активен раздел с соусами");
 
         mainPage.constructor.clickBunsTab();
-        assertTrue(mainPage.constructor.isBunsSectionDisplayed(), "Должен отображаться раздел с булками");
+        assertTrue(mainPage.constructor.isBunsSectionActive(), "Должен быть активен раздел с булками");
     }
 
     @Test
@@ -37,7 +37,7 @@ public class ConstructorTest extends BaseTest {
         mainPage.open();
 
         mainPage.constructor.clickSaucesTab();
-        assertTrue(mainPage.constructor.isSaucesSectionDisplayed(), "Должен отображаться раздел с соусами");
+        assertTrue(mainPage.constructor.isSaucesSectionActive(), "Должен быть активен раздел с соусами");
     }
 
     @Test
@@ -49,6 +49,6 @@ public class ConstructorTest extends BaseTest {
         mainPage.open();
 
         mainPage.constructor.clickFillingsTab();
-        assertTrue(mainPage.constructor.isFillingsSectionDisplayed(), "Должен отображаться раздел с начинками");
+        assertTrue(mainPage.constructor.isFillingsSectionActive(), "Должен быть активен раздел с начинками");
     }
 }

@@ -17,14 +17,14 @@ public class BurgerConstructorComponent {
     @FindBy(xpath = "//span[text()='Начинки']/parent::div")
     private WebElement fillingsTab;
 
-    @FindBy(xpath = "//h2[text()='Булки']")
-    private WebElement bunsSection;
+    @FindBy(xpath = "//div[contains(@class, 'tab_tab_type_current')]//span[text()='Булки']")
+    private WebElement activeBunsTab;
 
-    @FindBy(xpath = "//h2[text()='Соусы']")
-    private WebElement saucesSection;
+    @FindBy(xpath = "//div[contains(@class, 'tab_tab_type_current')]//span[text()='Соусы']")
+    private WebElement activeSaucesTab;
 
-    @FindBy(xpath = "//h2[text()='Начинки']")
-    private WebElement fillingsSection;
+    @FindBy(xpath = "//div[contains(@class, 'tab_tab_type_current')]//span[text()='Начинки']")
+    private WebElement activeFillingsTab;
 
     public BurgerConstructorComponent(WebDriver driver) {
         this.driver = driver;
@@ -43,15 +43,15 @@ public class BurgerConstructorComponent {
         fillingsTab.click();
     }
 
-    public boolean isBunsSectionDisplayed() {
-        return bunsSection.isDisplayed();
+    public boolean isBunsSectionActive() {
+        return activeBunsTab.isDisplayed();
     }
 
-    public boolean isSaucesSectionDisplayed() {
-        return saucesSection.isDisplayed();
+    public boolean isSaucesSectionActive() {
+        return activeSaucesTab.isDisplayed();
     }
 
-    public boolean isFillingsSectionDisplayed() {
-        return fillingsSection.isDisplayed();
+    public boolean isFillingsSectionActive() {
+        return activeFillingsTab.isDisplayed();
     }
 }

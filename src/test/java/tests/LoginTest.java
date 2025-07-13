@@ -1,11 +1,11 @@
 package tests;
 
+import api.AuthClient;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Story;
-import io.restassured.RestAssured;
-import io.restassured.response.Response;
+import models.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,29 +20,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Epic("Stellar Burgers")
 @Feature("Вход в систему")
 public class LoginTest extends BaseTest {
-    private String testEmail;
-    private final String PASSWORD = "43604360";
+    private User testUser;
     private String accessToken;
 
     @BeforeEach
     public void setUp() {
-        // Создание тестового пользователя через API
-        testEmail = "testuser" + System.currentTimeMillis() + "@mail.ru";
-        RestAssured.baseURI = "https://stellarburgers.nomoreparties.site";
-        RestAssured.given()
-                .contentType("application/json")
-                .body("{\"email\":\"" + testEmail + "\",\"password\":\"" + PASSWORD + "\",\"name\":\"TestUser\"}")
-                .post("/api/auth/register");
+        super.setUp();
+        testUser = createTestUser();
+        AuthClient.register(testUser); // Изменено с registerUser на register
     }
 
     @AfterEach
     public void tearDown() {
-        // Удаление тестового пользователя через API
-        if (accessToken != null) {
-            RestAssured.given()
-                    .header("Authorization", accessToken)
-                    .delete("/api/auth/user");
-        }
+        deleteTestUser(accessToken);
+        super.tearDown();
     }
 
     @Test
@@ -52,19 +43,12 @@ public class LoginTest extends BaseTest {
     public void testLoginViaMainPageButton() {
         MainPage mainPage = new MainPage(driver);
         mainPage.open();
-
         mainPage.clickLoginButton();
 
         LoginPage loginPage = new LoginPage(driver);
-        loginPage.login(testEmail, PASSWORD);
+        loginPage.login(testUser.getEmail(), testUser.getPassword());
 
-        // Получаем токен для последующего удаления пользователя
-        Response response = RestAssured.given()
-                .contentType("application/json")
-                .body("{\"email\":\"" + testEmail + "\",\"password\":\"" + PASSWORD + "\"}")
-                .post("/api/auth/login");
-        accessToken = response.path("accessToken");
-
+        accessToken = getAccessToken(testUser);
         assertTrue(mainPage.isOrderButtonDisplayed(), "После успешного входа должна отображаться кнопка оформления заказа");
     }
 
@@ -75,12 +59,12 @@ public class LoginTest extends BaseTest {
     public void testLoginViaPersonalAccountButton() {
         MainPage mainPage = new MainPage(driver);
         mainPage.open();
-
         mainPage.header.clickPersonalAccountButton();
 
         LoginPage loginPage = new LoginPage(driver);
-        loginPage.login(testEmail, PASSWORD);
+        loginPage.login(testUser.getEmail(), testUser.getPassword());
 
+        accessToken = getAccessToken(testUser);
         assertTrue(mainPage.isOrderButtonDisplayed(), "После успешного входа должна отображаться кнопка оформления заказа");
     }
 
@@ -91,7 +75,6 @@ public class LoginTest extends BaseTest {
     public void testLoginViaRegisterForm() {
         MainPage mainPage = new MainPage(driver);
         mainPage.open();
-
         mainPage.header.clickPersonalAccountButton();
 
         LoginPage loginPage = new LoginPage(driver);
@@ -100,8 +83,9 @@ public class LoginTest extends BaseTest {
         RegisterPage registerPage = new RegisterPage(driver);
         registerPage.clickLoginLink();
 
-        loginPage.login(testEmail, PASSWORD);
+        loginPage.login(testUser.getEmail(), testUser.getPassword());
 
+        accessToken = getAccessToken(testUser);
         assertTrue(mainPage.isOrderButtonDisplayed(), "После успешного входа должна отображаться кнопка оформления заказа");
     }
 
@@ -112,7 +96,6 @@ public class LoginTest extends BaseTest {
     public void testLoginViaForgotPasswordForm() {
         MainPage mainPage = new MainPage(driver);
         mainPage.open();
-
         mainPage.header.clickPersonalAccountButton();
 
         LoginPage loginPage = new LoginPage(driver);
@@ -121,8 +104,9 @@ public class LoginTest extends BaseTest {
         ForgotPasswordPage forgotPasswordPage = new ForgotPasswordPage(driver);
         forgotPasswordPage.clickLoginLink();
 
-        loginPage.login(testEmail, PASSWORD);
+        loginPage.login(testUser.getEmail(), testUser.getPassword());
 
+        accessToken = getAccessToken(testUser);
         assertTrue(mainPage.isOrderButtonDisplayed(), "После успешного входа должна отображаться кнопка оформления заказа");
     }
 }
